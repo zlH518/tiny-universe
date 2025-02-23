@@ -6,11 +6,17 @@ import requests
 import sentencepiece as spm
 import argparse
 
-DATA_CACHE_DIR = 'data'
+DATA_CACHE_DIR = 'content/TinyLLM/data'
+
+#yzm的代理
+proxies = {
+    "http": "http://192.168.25.10:30084",
+    "https": "http://192.168.25.10:30084",
+}
 
 def download_file(url: str, fname: str, chunk_size=1024):
     """发送HTTP GET请求以流式方式获取文件"""
-    resp = requests.get(url, stream=True)
+    resp = requests.get(url, stream=True,proxies=proxies)
     
     # 获取文件的总大小（以字节为单位），默认为0如果没有提供'content-length'头信息
     total = int(resp.headers.get("content-length", 0))
@@ -77,7 +83,7 @@ def batch_iterator(text_data, batch_size=648):
     for i in range(0, len(text_data), batch_size):
         yield text_data[i:i + batch_size]
 
-def train_vocab(vocab_size: int=32000, num_shards: int=20):
+def train_vocab(num_shards, vocab_size: int=32000):
     """
     vocab_size: int, 词汇表的大小，决定分词器的词汇量。
     num_shards: int, 用于加快词汇表训练的效率，指定要处理的分片数量。
@@ -141,7 +147,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--download", type=bool, default=True, help="download the dataset")
     parser.add_argument("--vocab_size", type=int, default=4096, help="vocab size")
+    parser.add_argument("--num_shards", type=int, default=None, help="number of shard to train Tokenizer")
     args = parser.parse_args()
     if args.download:
         download()
-    train_vocab(args.vocab_size)
+    if args.num_shards is None:
+        args.num_shards = len(glob.glob(os.path.join(os.path.join(DATA_CACHE_DIR, "TinyStories_all_data"), "*.json")))
+    train_vocab(vocab_size=args.vocab_size, num_shards=args.num_shards)
