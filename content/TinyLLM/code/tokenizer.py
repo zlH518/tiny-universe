@@ -2,8 +2,8 @@ import os
 import struct
 from sentencepiece import SentencePieceProcessor
 from typing import List
-
-TOKENIZER_MODEL = "./data/tok4096.model"
+#pr test
+TOKENIZER_MODEL = "content/TinyLLM/data/tok4096.model"
 
 class Tokenizer:
     def __init__(self, tokenizer_model=None):
