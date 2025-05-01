@@ -5,18 +5,18 @@ from tqdm import tqdm
 import requests
 import sentencepiece as spm
 import argparse
-
+## test
 DATA_CACHE_DIR = 'content/TinyLLM/data'
 
 #yzm的代理
-proxies = {
-    "http": "http://192.168.25.10:30084",
-    "https": "http://192.168.25.10:30084",
-}
+# proxies = {
+#     "http": "http://192.168.25.10:30084",
+#     "https": "http://192.168.25.10:30084",
+# }
 
 def download_file(url: str, fname: str, chunk_size=1024):
     """发送HTTP GET请求以流式方式获取文件"""
-    resp = requests.get(url, stream=True,proxies=proxies)
+    resp = requests.get(url, stream=True)
     
     # 获取文件的总大小（以字节为单位），默认为0如果没有提供'content-length'头信息
     total = int(resp.headers.get("content-length", 0))
